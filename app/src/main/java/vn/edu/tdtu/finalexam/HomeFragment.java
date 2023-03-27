@@ -49,8 +49,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_categories:
-                return true;
+            //case R.id.menu_categories:
+            //    return true;
             case R.id.menu_notes:
                 Intent intent = new Intent(activity, AddNoteActivity.class);
                 startActivity(intent);

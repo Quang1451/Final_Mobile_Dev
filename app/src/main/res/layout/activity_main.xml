@@ -24,6 +24,6 @@
         app:itemIconTint="@drawable/item_checked_color"
         app:itemTextColor="@color/white"
         app:menu="@menu/menu_bottom"
-        app:tabSelectedTextColor="@color/white"/>
+        app:tabSelectedTextColor="@color/white" />
 
 </LinearLayout>
