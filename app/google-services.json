@@ -1,58 +1,33 @@
 {
   "project_info": {
-    "project_number": "495079077587",
-    "firebase_url": "https://final-exam-27d93-default-rtdb.firebaseio.com",
-    "project_id": "final-exam-27d93",
-    "storage_bucket": "final-exam-27d93.appspot.com"
+    "project_number": "348171726435",
+    "project_id": "dev-mobile-4ddf4",
+    "storage_bucket": "dev-mobile-4ddf4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:495079077587:android:5b5aeb626a40188a91c626",
+        "mobilesdk_app_id": "1:348171726435:android:aff32e19cf6d0453d51256",
         "android_client_info": {
           "package_name": "vn.edu.tdtu.finalexam"
         }
       },
       "oauth_client": [
         {
-          "client_id": "495079077587-31hnhdcmlr6qmg3a8jsfhvuqv2580bhm.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "vn.edu.tdtu.finalexam",
-            "certificate_hash": "232526d728aa735bdbfdecefcf228e1f13554612"
-          }
-        },
-        {
-          "client_id": "495079077587-7ogms761ujvq1kbuhk2ck2bcobif87di.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "vn.edu.tdtu.finalexam",
-            "certificate_hash": "c20ced3e36df3187b72762f34d23d563a5d218b7"
-          }
-        },
-        {
-          "client_id": "495079077587-h42s5atqdpn08b59ps0ifiscs5vijsn9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "vn.edu.tdtu.finalexam",
-            "certificate_hash": "0181a57dffddba05ed30bb62965f02f39910084b"
-          }
-        },
-        {
-          "client_id": "495079077587-rcl4cvhvfg56ms64skqdcepn5enp7fdi.apps.googleusercontent.com",
+          "client_id": "348171726435-nt0nvq5nrbdmu35227pg5u8m747g3at6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDHEJ_3PuaygAddbVTm0vCLwSwZZ_cpl04"
+          "current_key": "AIzaSyAWEAZB052S7S_K3Yvcv0W0CAESXGhNLV0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "495079077587-rcl4cvhvfg56ms64skqdcepn5enp7fdi.apps.googleusercontent.com",
+              "client_id": "348171726435-nt0nvq5nrbdmu35227pg5u8m747g3at6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
