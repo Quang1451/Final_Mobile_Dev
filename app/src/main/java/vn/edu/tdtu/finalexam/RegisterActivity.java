@@ -22,44 +22,38 @@ import com.google.firebase.database.FirebaseDatabase;
 public class RegisterActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference("Accounts");
-    EditText nameInput, codeInput, phoneInput, passwordInput;
+    EditText nameInput, phoneInput, passwordInput, rePasswordInput;
     Button registerBtn;
     Account newAccount;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
         nameInput = findViewById(R.id.username);
-//        codeInput = findViewById(R.id.country_codeRegister);
         phoneInput = findViewById(R.id.phoneNumber);
         passwordInput = findViewById(R.id.password);
+        rePasswordInput = findViewById(R.id.confirmPassword);
 
         registerBtn = findViewById(R.id.btn_register);
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name, code, phone, password;
+                String name, phone, password, confirmPassword;
                 name = String.valueOf(nameInput.getText().toString());
-//                code = String.valueOf(codeInput.getText().toString());
                 phone = String.valueOf(phoneInput.getText().toString());
                 password = String.valueOf(passwordInput.getText().toString());
-
+                confirmPassword = String.valueOf(rePasswordInput.getText().toString());
                 if(TextUtils.isEmpty(name)) {
                     Toast.makeText(RegisterActivity.this, "Chưa nhập Họ tên!", Toast.LENGTH_LONG).show();
                     return;
                 }
-//                if(TextUtils.isEmpty(code)) {
-//                    Toast.makeText(RegisterActivity.this, "Chưa nhập Mã vùng!", Toast.LENGTH_LONG).show();
-//                    return;
-//                }
                 if(TextUtils.isEmpty(phone) || phone.length() != 10) {
                     Toast.makeText(RegisterActivity.this, "Số điện thoại không hợp lệ!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(TextUtils.isEmpty(password) || password.length() < 6 ) {
+                if(TextUtils.isEmpty(password) || password.length() < 6 || !password.equals(confirmPassword)) {
                     Toast.makeText(RegisterActivity.this, "Mật khẩu không hợp lệ!", Toast.LENGTH_LONG).show();
                     return;
                 }

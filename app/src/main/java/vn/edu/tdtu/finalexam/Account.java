@@ -4,12 +4,10 @@ import java.io.Serializable;
 
 public class Account implements Serializable {
     String fullName, phoneNumber, password;
-
     public Account() {}
 
     public Account(String fullName, String phoneNumber, String password) {
         this.fullName = fullName;
-
         this.phoneNumber = phoneNumber;
         this.password = password;
     }
