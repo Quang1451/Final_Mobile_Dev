@@ -32,7 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         nameInput = findViewById(R.id.username);
-        codeInput = findViewById(R.id.country_codeRegister);
+//        codeInput = findViewById(R.id.country_codeRegister);
         phoneInput = findViewById(R.id.phoneNumber);
         passwordInput = findViewById(R.id.password);
 
@@ -43,7 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String name, code, phone, password;
                 name = String.valueOf(nameInput.getText().toString());
-                code = String.valueOf(codeInput.getText().toString());
+//                code = String.valueOf(codeInput.getText().toString());
                 phone = String.valueOf(phoneInput.getText().toString());
                 password = String.valueOf(passwordInput.getText().toString());
 
@@ -51,10 +51,10 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Chưa nhập Họ tên!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(TextUtils.isEmpty(code)) {
-                    Toast.makeText(RegisterActivity.this, "Chưa nhập Mã vùng!", Toast.LENGTH_LONG).show();
-                    return;
-                }
+//                if(TextUtils.isEmpty(code)) {
+//                    Toast.makeText(RegisterActivity.this, "Chưa nhập Mã vùng!", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
                 if(TextUtils.isEmpty(phone) || phone.length() != 10) {
                     Toast.makeText(RegisterActivity.this, "Số điện thoại không hợp lệ!", Toast.LENGTH_LONG).show();
                     return;
@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                newAccount = new Account(name,code, phone, password);
+                newAccount = new Account(name, phone, password);
 
                 reference.child(phone).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override

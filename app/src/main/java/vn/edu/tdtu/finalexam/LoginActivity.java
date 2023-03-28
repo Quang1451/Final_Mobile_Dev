@@ -17,17 +17,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        otpBtn = findViewById(R.id.btnOTP);
+        //otpBtn = findViewById(R.id.btnOTP);
         loginBtn = findViewById(R.id.btnLogin);
         registerTv = findViewById(R.id.createAccount);
         forgotPasswordTv = findViewById(R.id.forgotPassword);
 
-        otpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+//        otpBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override

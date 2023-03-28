@@ -11,7 +11,7 @@
         android:id="@+id/app_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="32dp"
         android:gravity="center"
         android:text="Note App"
         android:textColor="@color/blue"
@@ -29,25 +29,6 @@
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/app_title"
         tools:ignore="MissingConstraints">
-
-        <EditText
-            android:id="@+id/country_code"
-            android:layout_width="17dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/round_style"
-            android:backgroundTint="@color/white"
-            android:hint="Mã vùng"
-            android:imeOptions="actionDone"
-            android:importantForAutofill="no"
-            android:inputType="phone|numberDecimal"
-            android:minHeight="48dp"
-            android:paddingStart="10dp"
-            android:textColor="@color/black"
-            android:textColorHint="#808080"
-            tools:ignore="HardcodedText,LabelFor,RtlSymmetry" />
 
         <EditText
             android:id="@+id/phone"
@@ -110,44 +91,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput"
-        tools:ignore="MissingConstraints">
-
-        <EditText
-            android:id="@+id/OTPString"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/round_style"
-            android:backgroundTint="@color/white"
-            android:ems="10"
-            android:hint="Nhập mật mã OTP"
-            android:imeOptions="actionDone"
-            android:importantForAutofill="no"
-            android:inputType="number"
-            android:minHeight="48dp"
-            android:paddingStart="10dp"
-            android:textColor="@color/black"
-            android:textColorHint="#808080"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="HardcodedText,RtlSymmetry" />
-
-        <Button
-            android:id="@+id/btnOTP"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/round_style"
-            android:backgroundTint="#03A9F4"
-            android:text="Lấy mã"
-            android:textColor="#FFFFFF"
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
+        tools:ignore="MissingConstraints"/>
 
     <Button
         android:id="@+id/btnLogin"

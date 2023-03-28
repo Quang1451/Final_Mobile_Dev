@@ -3,19 +3,15 @@ package vn.edu.tdtu.finalexam;
 import java.io.Serializable;
 
 public class Account implements Serializable {
-    String fullName, code, phoneNumber, password;
+    String fullName, phoneNumber, password;
 
     public Account() {}
 
-    public Account(String fullName, String code, String phoneNumber, String password) {
+    public Account(String fullName, String phoneNumber, String password) {
         this.fullName = fullName;
-        this.code = code;
+
         this.phoneNumber = phoneNumber;
         this.password = password;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     public String getFullName() {
