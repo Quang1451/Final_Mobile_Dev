@@ -33,8 +33,7 @@ public class OTPRegisterActivity extends AppCompatActivity {
     TextView backBtn;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference("Accounts");
-    FirebaseAuth mAuth;
-    String verifyCode;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();;
     Account account;
 
     @Override
@@ -48,20 +47,19 @@ public class OTPRegisterActivity extends AppCompatActivity {
 
         account = (Account) getIntent().getSerializableExtra("AccountInfo");
 
-        mAuth = FirebaseAuth.getInstance();
-        //Send OTP
-        sendOtp(account.getPhoneNumber());
-
         verifyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    String otp = otpInput.getText().toString();
+                String otp = otpInput.getText().toString();
                 if(otp.isEmpty()) {
                     Toast.makeText(OTPRegisterActivity.this, "Chưa nhập OTP!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(verifyCode == null) {
-                    Toast.makeText(OTPRegisterActivity.this, "OTP quá hạn!", Toast.LENGTH_LONG).show();
+                //Get code
+                String verifyCode = getIntent().getStringExtra("VerifyCode");
+
+                if(verifyCode.isEmpty()) {
+                    Toast.makeText(OTPRegisterActivity.this, "Không có mã !", Toast.LENGTH_LONG).show();
                     return;
                 }
                 signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(verifyCode, otp));
@@ -74,37 +72,6 @@ public class OTPRegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks myCallback = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-        @Override
-        public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
-            signInWithPhoneAuthCredential(credential);
-        }
-
-        @Override
-        public void onVerificationFailed(@NonNull FirebaseException e) {
-            Toast.makeText(OTPRegisterActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onCodeSent(@NonNull String verificationId,
-                               @NonNull PhoneAuthProvider.ForceResendingToken token) {
-            verifyCode = verificationId;
-        }
-    };
-
-
-    private void sendOtp(String phoneNumber) {
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(mAuth)
-                        .setPhoneNumber("+84"+phoneNumber)       // Phone number to verify
-                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                        .setActivity(this)                 // Activity (for callback binding)
-                        .setCallbacks(myCallback)          // OnVerificationStateChangedCallbacks
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {

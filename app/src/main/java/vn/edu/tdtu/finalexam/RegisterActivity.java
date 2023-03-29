@@ -10,13 +10,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -24,7 +32,9 @@ public class RegisterActivity extends AppCompatActivity {
     DatabaseReference reference = database.getReference("Accounts");
     EditText nameInput, phoneInput, passwordInput, rePasswordInput;
     Button registerBtn;
+    ProgressBar progressBar;
     Account newAccount;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +46,10 @@ public class RegisterActivity extends AppCompatActivity {
         rePasswordInput = findViewById(R.id.confirmPassword);
 
         registerBtn = findViewById(R.id.btn_register);
+        progressBar = findViewById(R.id.register_progressbar);
+
+        registerBtn.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,15 +86,56 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                //Send value account
-                                Intent intent = new Intent(RegisterActivity.this, OTPRegisterActivity.class);
-                                intent.putExtra("AccountInfo", newAccount);
-                                startActivity(intent);
+                                registerBtn.setVisibility(View.INVISIBLE);
+                                progressBar.setVisibility(View.VISIBLE);
+
+                                //Send OTP
+                                sendOtp(newAccount.getPhoneNumber());
                             }
                         }
                     }
                 });
             }
         });
+    }
+
+    private void sendOtp(String phoneNumber) {
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(mAuth)
+                        .setPhoneNumber("+84"+phoneNumber)       // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(this)                 // Activity (for callback binding)
+                        .setCallbacks(myCallback)          // OnVerificationStateChangedCallbacks
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks myCallback = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+        @Override
+        public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {}
+
+        @Override
+        public void onVerificationFailed(@NonNull FirebaseException e) {
+            Toast.makeText(RegisterActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            registerBtn.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        public void onCodeSent(@NonNull String verificationId,
+                               @NonNull PhoneAuthProvider.ForceResendingToken token) {
+            //Send value account
+            Intent intent = new Intent(RegisterActivity.this, OTPRegisterActivity.class);
+            intent.putExtra("AccountInfo", newAccount);
+            intent.putExtra("VerifyCode", verificationId);
+            startActivity(intent);
+        }
+    };
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerBtn.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }
