@@ -129,13 +129,21 @@ public class RegisterActivity extends AppCompatActivity {
             Intent intent = new Intent(RegisterActivity.this, OTPRegisterActivity.class);
             intent.putExtra("AccountInfo", newAccount);
             intent.putExtra("VerifyCode", verificationId);
-            startActivity(intent);
+            startActivityForResult(intent , 1);
         }
     };
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        registerBtn.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.INVISIBLE);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK){
+                finish();
+            }
+            if (resultCode == RESULT_CANCELED) {
+                registerBtn.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 }

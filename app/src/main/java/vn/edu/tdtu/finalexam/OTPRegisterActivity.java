@@ -81,7 +81,9 @@ public class OTPRegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             reference.child(account.getPhoneNumber().trim()).setValue(account);
-                            startActivity(new Intent(OTPRegisterActivity.this, MainActivity.class));
+                            getSharedPreferences("SP", MODE_PRIVATE).edit().putString("LoginBefore", account.getPhoneNumber().trim()).commit();
+                            setResult(RESULT_OK);
+                            finish();
                         } else {
                             Toast.makeText(OTPRegisterActivity.this, "OTP không hợp lệ!", Toast.LENGTH_LONG).show();
                         }

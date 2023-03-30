@@ -37,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
         phoneInput = findViewById(R.id.phone);
         passwordInput = findViewById(R.id.txtPassword);
 
+        CheckLoginBefore();
+
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,7 +81,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else {
                     if(task.getResult().exists()) {
-                        if(passwordInput.getText().toString().equals(task.getResult().child("password").getValue(String.class))) {
+                        if(passwordInput.getText().toString().equals(task.getResult().child("password").getValue())) {
+                            getSharedPreferences("SP", MODE_PRIVATE).edit().putString("LoginBefore", (String) task.getResult().getKey()).commit();
+
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             return;
@@ -93,5 +97,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void CheckLoginBefore() {
+        String loginAccount = getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
+        Log.d("Detail",loginAccount);
+        if(loginAccount.isEmpty()) return;
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

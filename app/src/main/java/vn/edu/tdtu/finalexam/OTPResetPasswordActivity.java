@@ -44,6 +44,8 @@ public class OTPResetPasswordActivity extends AppCompatActivity {
         resetOTP = findViewById(R.id.btnOTPReset);
         submitBtn = findViewById(R.id.btn_reset);
 
+        submitBtn.setEnabled(false);
+
         resetOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,6 +64,7 @@ public class OTPResetPasswordActivity extends AppCompatActivity {
                         else {
                             if(task.getResult().exists()) {
                                 //Send OTP
+                                submitBtn.setEnabled(true);
                                 sendOtp(String.valueOf(task.getResult().getKey()));
                             }
                             else
@@ -162,10 +165,10 @@ public class OTPResetPasswordActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
+            if(resultCode == RESULT_OK){
                 finish();
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
+            if (resultCode == RESULT_CANCELED) {
             }
         }
     }

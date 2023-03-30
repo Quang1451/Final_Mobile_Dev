@@ -1,6 +1,7 @@
 package vn.edu.tdtu.finalexam;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -39,17 +40,15 @@ public class OptionFragment extends Fragment implements NavigationView.OnNavigat
         int id = item.getItemId();
         switch (id) {
             case R.id.changePassword:
-                Intent intent = new Intent(activity,ChangePasswordActivity.class);
-                startActivity(intent);
+                startActivity( new Intent(activity,ChangePasswordActivity.class));
                 return true;
             case R.id.sync:
                 return true;
             case R.id.theme:
                 return true;
             case R.id.logout:
-                //TODO logout
-                Intent intent1 = new Intent(activity,LoginActivity.class);
-                startActivity(intent1);
+                activity.getSharedPreferences("SP", Context.MODE_PRIVATE).edit().putString("LoginBefore", "").commit();
+                startActivity(new Intent(activity,LoginActivity.class));
                 return true;
         }
         return false;
