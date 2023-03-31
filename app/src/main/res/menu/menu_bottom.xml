@@ -9,7 +9,7 @@
         android:orderInCategory="1"
         android:icon="@drawable/trashbin_icon"
         android:title="Recycle Bin"/>
-    <item android:id="@+id/menu_alarm"
+    <item android:id="@+id/menu_calendar"
         android:orderInCategory="2"
         android:icon="@drawable/ic_baseline_calendar_month_24"
         android:title="Calendar"

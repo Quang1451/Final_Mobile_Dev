@@ -2,26 +2,19 @@ package vn.edu.tdtu.finalexam;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     HomeFragment homeFragment = new HomeFragment();
     RecycleBinFragment recycleBinFragment = new RecycleBinFragment();
-    AlarmFragment alarmFragment = new AlarmFragment();
+    CalendarFragment calendarFragment = new CalendarFragment();
     OptionFragment optionFragment = new OptionFragment();
 
     @Override
@@ -44,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menu_recycleBin:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, recycleBinFragment).commit();
                         return true;
-                    case R.id.menu_alarm:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.container, alarmFragment).commit();
+                    case R.id.menu_calendar:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, calendarFragment).commit();
                         return true;
                     case R.id.menu_option:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, optionFragment).commit();

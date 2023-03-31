@@ -7,12 +7,12 @@
         tools:ignore="HardcodedText">
     </item>
     <item
-        android:id="@+id/menu_schedules"
+        android:id="@+id/menu_draws"
         android:title="Vẽ"
         tools:ignore="HardcodedText">
     </item>
     <item
-        android:id="@+id/menu_tasks"
+        android:id="@+id/menu_pictures"
         android:title="Hình ảnh"
         tools:ignore="HardcodedText">
     </item>
