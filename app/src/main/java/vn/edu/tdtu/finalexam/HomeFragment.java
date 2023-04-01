@@ -75,6 +75,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             case R.id.menu_draws:
                 return true;
             case R.id.menu_pictures:
+                Intent intent2 = new Intent(activity, AddPictureActivity.class);
+                startActivity(intent2);
                 return true;
         }
         return false;

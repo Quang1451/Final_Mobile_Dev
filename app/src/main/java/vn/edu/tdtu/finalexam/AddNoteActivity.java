@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -82,11 +83,29 @@ public class AddNoteActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Spannable spannable = new SpannableStringBuilder(contentInput.getText());
-                String test = Html.toHtml(spannable);
-                System.out.println(test);
-                titleInput.setText(Html.fromHtml(test));
+                save();
+
             }
         });
+    }
+
+    private void save() {
+        String title = titleInput.getText().toString();
+        String content = Html.toHtml(new SpannableStringBuilder(contentInput.getText()));
+        System.out.println(content);
+
+        if(title.isEmpty()) {
+            Toast.makeText(this, "Chưa nhập tiêu đề", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(content.isEmpty()) {
+            Toast.makeText(this, "Chưa nhập nội dung", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
+        //Convert to spannable
+        //titleInput.setText(Html.fromHtml(test));
     }
 }
