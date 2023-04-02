@@ -2,25 +2,20 @@ package vn.edu.tdtu.finalexam;
 
 import android.graphics.Bitmap;
 
+import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class NoteItem {
-    private int id;
     private String type;
     private String title;
-    private Time time;
-    private Bitmap bitmap;
+    private String time;
 
-    public NoteItem(int id, String type, String title, Time time, Bitmap bitmap) {
-        this.id = id;
-        this.type = type;
+
+    public NoteItem(String title, String time) {
         this.title = title;
         this.time = time;
-        this.bitmap = bitmap;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getType() {
@@ -31,17 +26,8 @@ public class NoteItem {
         return title;
     }
 
-    public Time getTime() {
+    public String getTime() {
         return time;
-    }
-
-    public Bitmap getBitmap() {
-        if(type.equals("Note")) return  null;
-        return bitmap;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setType(String type) {
@@ -52,12 +38,12 @@ public class NoteItem {
         this.title = title;
     }
 
-    public void setTime(Time time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        if(type.equals("Note")) return;
-        this.bitmap = bitmap;
+    public String getData() {
+        return null;
     }
 }
+

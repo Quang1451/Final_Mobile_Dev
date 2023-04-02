@@ -16,11 +16,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Random;
 
 public class AddDrawActivity extends AppCompatActivity {
-
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference reference = database.getReference("Notes");
     TextView backBtn, saveBtn;
     DrawView drawView;
     EditText titleInput;
@@ -111,6 +118,8 @@ public class AddDrawActivity extends AppCompatActivity {
     }
 
     private void save() {
+        String loginAccount = getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
+        int id = new Random().nextInt(10000);
         String title = titleInput.getText().toString();
         String base64String = "";
 
@@ -136,8 +145,18 @@ public class AddDrawActivity extends AppCompatActivity {
             return;
         }
 
-        Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
+        NoteItem noteItem = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            LocalDate localDate = LocalDate.now();
+            String date =  DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDate);
+            noteItem = new Draw(title, base64String, date);
+        }
 
+        if(noteItem == null) return;
+
+        reference.child(loginAccount).child(String.format("%05d", id)).setValue(noteItem);
+        Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
+        finish();
         //        drawView2.setBitmap(bitmap);
 //        drawView2.invalidate();
     }

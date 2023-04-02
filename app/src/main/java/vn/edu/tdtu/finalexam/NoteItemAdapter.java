@@ -34,7 +34,13 @@ public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteIt
         holder.typeTV.setText(noteItem.getType());
         holder.tileTV.setText(noteItem.getTitle());
         holder.timeTV.setText(noteItem.getTime().toString());
-        holder.imageView.setImageBitmap(noteItem.getBitmap());
+
+        if(noteItem.getType().equals("Note")) {
+            String base64 = noteItem.getData();
+            //holder.imageView.setImageBitmap();
+        }
+
+
 
     }
 

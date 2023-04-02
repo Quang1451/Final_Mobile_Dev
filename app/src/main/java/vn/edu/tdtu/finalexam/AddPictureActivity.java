@@ -21,11 +21,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Random;
 
 
 public class AddPictureActivity extends AppCompatActivity {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference reference = database.getReference("Notes");
     private static final int PERMISSION_CODE = 1000;
     private static final int CAMERA_REQUEST = 1500;
     TextView backBtn, saveBtn;
@@ -115,6 +123,8 @@ public class AddPictureActivity extends AppCompatActivity {
     }
 
     private void save() {
+        String loginAccount = getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
+        int id = new Random().nextInt(10000);
         String title = titleInput.getText().toString();
         String base64String = "";
         BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
@@ -139,7 +149,18 @@ public class AddPictureActivity extends AppCompatActivity {
             return;
         }
 
+        NoteItem noteItem = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            LocalDate localDate = LocalDate.now();
+            String date =  DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDate);
+            noteItem = new Picture(title, base64String, date);
+        }
+
+        if(noteItem == null) return;
+
+        reference.child(loginAccount).child(String.format("%05d", id)).setValue(noteItem);
         Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
+        finish();
 
 //
 //            //Decode

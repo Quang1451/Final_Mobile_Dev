@@ -101,9 +101,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void CheckLoginBefore() {
         String loginAccount = getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
-        Log.d("Detail",loginAccount);
-        if(loginAccount.isEmpty()) return;
 
+        if(loginAccount.isEmpty()) return;
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
