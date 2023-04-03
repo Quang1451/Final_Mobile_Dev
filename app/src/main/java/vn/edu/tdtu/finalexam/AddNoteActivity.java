@@ -100,6 +100,7 @@ public class AddNoteActivity extends AppCompatActivity {
     private void save() {
         String loginAccount = getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
         int id = new Random().nextInt(10000);
+        String strId = String.format("%05d", id);
         String title = titleInput.getText().toString();
         String content = Html.toHtml(new SpannableStringBuilder(contentInput.getText()));
         if(title.isEmpty()) {
@@ -116,15 +117,13 @@ public class AddNoteActivity extends AppCompatActivity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             LocalDate localDate = LocalDate.now();
             String date =  DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDate);
-            noteItem = new Note(title, content, date);
+            noteItem = new Note(strId, title, content, date);
         }
 
         if(noteItem == null) return;
 
-        reference.child(loginAccount).child(String.format("%05d", id)).setValue(noteItem);
+        reference.child(loginAccount).child(strId).setValue(noteItem);
         Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
         finish();
-        //Convert to spannable
-        //titleInput.setText(Html.fromHtml(test));
     }
 }

@@ -1,5 +1,8 @@
 package vn.edu.tdtu.finalexam;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +12,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Base64;
 import java.util.List;
 
 public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteItemHolder> {
+    private final SelectRecycleViewInterface selectRecycleViewInterface;
+    private Context mContext;
     private List<NoteItem> noteItemList;
+
+    public NoteItemAdapter(Context mContext, SelectRecycleViewInterface selectRecycleViewInterface) {
+        this.mContext = mContext;
+        this.selectRecycleViewInterface = selectRecycleViewInterface;
+    }
 
     public void setData(List<NoteItem> list) {
         this.noteItemList = list;
@@ -23,7 +34,7 @@ public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteIt
     @Override
     public NoteItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
-        return new NoteItemHolder(view);
+        return new NoteItemHolder(view, selectRecycleViewInterface);
     }
 
     @Override
@@ -35,13 +46,14 @@ public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteIt
         holder.tileTV.setText(noteItem.getTitle());
         holder.timeTV.setText(noteItem.getTime().toString());
 
-        if(noteItem.getType().equals("Note")) {
-            String base64 = noteItem.getData();
-            //holder.imageView.setImageBitmap();
+        if(noteItem.getType().equals("Note")) return;
+
+        String base64 = noteItem.getData();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            byte[] bytes = Base64.getDecoder().decode(base64);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            holder.imageView.setImageBitmap(bitmap);
         }
-
-
-
     }
 
     @Override
@@ -52,16 +64,27 @@ public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteIt
         return 0;
     }
 
-    public class NoteItemHolder extends RecyclerView.ViewHolder {
+    public static class NoteItemHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView typeTV, tileTV, timeTV;
 
-        public NoteItemHolder(@NonNull View itemView) {
+        public NoteItemHolder(@NonNull View itemView, SelectRecycleViewInterface selectRecycleViewInterface) {
             super(itemView);
             imageView = itemView.findViewById(R.id.cardImage);
             typeTV = itemView.findViewById(R.id.cardType);
             tileTV = itemView.findViewById(R.id.cardTitle);
             timeTV = itemView.findViewById(R.id.cardTime);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(selectRecycleViewInterface == null) return;
+                    int pos = getAdapterPosition();
+
+                    if(pos == RecyclerView.NO_POSITION) return;
+                    selectRecycleViewInterface.onItemClick(pos);
+                }
+            });
         }
     }
 }

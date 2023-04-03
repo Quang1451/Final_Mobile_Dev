@@ -15,6 +15,12 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".EditDrawActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditPictureActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddDrawActivity"
             android:exported="false" />
         <activity

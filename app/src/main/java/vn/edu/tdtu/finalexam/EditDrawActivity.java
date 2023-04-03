@@ -6,6 +6,7 @@ import static vn.edu.tdtu.finalexam.DrawView.pathList;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -14,21 +15,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.Random;
 
-public class AddDrawActivity extends AppCompatActivity {
+public class EditDrawActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference reference = database.getReference("Notes");
-    TextView backBtn, saveBtn;
+    Draw draw = null;
+    TextView backBtn, editBtn;
     DrawView drawView;
     EditText titleInput;
     Button eraserBtn, redBtn, yellowBtn, greenBtn, blackBtn;
@@ -37,10 +34,10 @@ public class AddDrawActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_draw);
+        setContentView(R.layout.activity_edit_draw);
 
         backBtn = findViewById(R.id.backBtn);
-        saveBtn = findViewById(R.id.saveBtn);
+        editBtn = findViewById(R.id.editBtn);
         titleInput = findViewById(R.id.titleInput);
 
         drawView = findViewById(R.id.drawView);
@@ -51,7 +48,8 @@ public class AddDrawActivity extends AppCompatActivity {
         greenBtn = findViewById(R.id.greenColor);
         blackBtn = findViewById(R.id.blackColor);
 
-        clearDraw();
+        getData();
+
         eraserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,12 +97,28 @@ public class AddDrawActivity extends AppCompatActivity {
             }
         });
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                save();
+                saveEdit();
             }
         });
+    }
+
+    private  void getData() {
+        clearDraw();
+        draw = (Draw) getIntent().getSerializableExtra("DrawEdit");
+
+        if(draw == null) return;
+
+        titleInput.setText(draw.getTitle());
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            byte[] bytes = Base64.getDecoder().decode(draw.getData());
+//            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//            drawView.setBitmap(bitmap);
+//            drawView.invalidate();
+//        }
+
     }
 
     public void clearDraw() {
@@ -118,48 +132,7 @@ public class AddDrawActivity extends AppCompatActivity {
         path = new Path();
     }
 
-    private void save() {
-        String loginAccount = getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
-        int id = new Random().nextInt(10000);
-        String strId = String.format("%05d", id);
-        String title = titleInput.getText().toString();
-        String base64String = "";
+    private  void saveEdit() {
 
-        drawView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(drawView.getDrawingCache());
-
-        //Convert to base64
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] bytes = stream.toByteArray();
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            base64String = Base64.getEncoder().encodeToString(bytes);
-            System.out.println(base64String);
-        }
-
-        if(title.isEmpty()) {
-            Toast.makeText(this, "Chưa nhập tiêu đề", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(base64String.isEmpty()) {
-            Toast.makeText(this, "Chưa nhập có hình vẽ", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        NoteItem noteItem = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            LocalDate localDate = LocalDate.now();
-            String date =  DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDate);
-            noteItem = new Draw(strId, title, base64String, date);
-        }
-
-        if(noteItem == null) return;
-
-        reference.child(loginAccount).child(strId).setValue(noteItem);
-        Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
-        finish();
-        //        drawView2.setBitmap(bitmap);
-//        drawView2.invalidate();
     }
 }

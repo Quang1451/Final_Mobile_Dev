@@ -1,32 +1,49 @@
 package vn.edu.tdtu.finalexam;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
-public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
+public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener,SelectRecycleViewInterface {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference reference = database.getReference("Notes");
+    List<NoteItem> noteItemList = new ArrayList<>();
     Activity activity;
     FloatingActionButton addNoteBtn;
-
-    private RecyclerView rcvCategory;
-
-    //private CategoryAdapter categoryAdapter;
+    RecyclerView recyclerView;
+    RelativeLayout emptyLayout;
+    NoteItemAdapter noteItemAdapter;
+    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,13 +59,20 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         super.onStart();
         addNoteBtn = activity.findViewById(R.id.addNoteBtn);
 
-        rcvCategory = activity.findViewById(R.id.reView);
-//        categoryAdapter = new CategoryAdapter(this);
-//
+        progressBar = activity.findViewById(R.id.progressBar);
+        recyclerView = activity.findViewById(R.id.reView);
+        emptyLayout = activity.findViewById(R.id.emptyList);
+
+        noteItemAdapter = new NoteItemAdapter(activity, this);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity, RecyclerView.VERTICAL, false);
-        rcvCategory.setLayoutManager(linearLayoutManager);
-//
-//        categoryAdapter.setData(getListCategory());
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+        emptyLayout.setVisibility(View.INVISIBLE);
+
+        getListNoteItems();
 
         addNoteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,21 +108,78 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         return false;
     }
 
-//    private List<Category> getListCategory(){
-//        List<Category> categoryList = new ArrayList<>();
-//
-//        /* Khởi tạo giá trị cho view */
-//
-//        List<NotesCardView> notesCardViewList = new ArrayList<>();
-//        notesCardViewList.add(new NotesCardView(R.drawable.home_icon, "Ghi chu 1"));
-//        notesCardViewList.add(new NotesCardView(R.drawable.home_icon, "Ghi chu 2"));
-//        notesCardViewList.add(new NotesCardView(R.drawable.home_icon, "Ghi chu 3"));
-//        notesCardViewList.add(new NotesCardView(R.drawable.home_icon, "Ghi chu 4"));
-//        notesCardViewList.add(new NotesCardView(R.drawable.home_icon, "Ghi chu 5"));
-//
-//        categoryList.add(new Category( "Ghi chu",notesCardViewList));
-//        categoryList.add(new Category( "Hinh",notesCardViewList));
-//        categoryList.add(new Category( "Ve",notesCardViewList));
-//        return categoryList;
-//    }
+    private void getListNoteItems() {
+        String loginAccount = activity.getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
+        noteItemList.clear();
+        //Query data
+        reference.child(loginAccount).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                   for(DataSnapshot child : task.getResult().getChildren()) {
+                       NoteItem item = new NoteItem();
+                       String type = child.child("type").getValue().toString();
+                       String id = child.getKey();
+                       String title = child.child("title").getValue().toString();
+                       String data = child.child("data").getValue().toString();
+                       String time = child.child("time").getValue().toString();
+                       boolean isCanceled = child.child("canceled").getValue(boolean.class);
+
+                       if(isCanceled) continue;
+
+                       switch (type.trim()) {
+                           case "Picture" :
+                               item = new Picture(id,title,data,time);
+                               break;
+                           case "Draw" :
+                               item = new Draw(id,title,data,time);
+                               break;
+                           default:
+                               item = new Note(id,title,data,time);
+                               break;
+                       }
+                       item.setCanceled(isCanceled);
+                       System.out.println(item.getId());
+                       noteItemList.add(item);
+                   }
+
+                   if(noteItemList.size() > 0) {
+                       progressBar.setVisibility(View.INVISIBLE);
+                       recyclerView.setVisibility(View.VISIBLE);
+                       emptyLayout.setVisibility(View.INVISIBLE);
+                   }
+                   else {
+                       progressBar.setVisibility(View.INVISIBLE);
+                       recyclerView.setVisibility(View.INVISIBLE);
+                       emptyLayout.setVisibility(View.VISIBLE);
+                   }
+                   noteItemAdapter.setData(noteItemList);
+                   recyclerView.setAdapter(noteItemAdapter);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = null;
+        switch (noteItemList.get(position).getType()) {
+            case "Picture":
+                intent = new Intent(activity, EditPictureActivity.class);
+                intent.putExtra("PictureEdit",noteItemList.get(position));
+                break;
+            case "Draw":
+                intent = new Intent(activity, EditDrawActivity.class);
+                intent.putExtra("DrawEdit",noteItemList.get(position));
+                break;
+            default:
+                intent = new Intent(activity, EditNoteActivity.class);
+                intent.putExtra("NoteEdit",noteItemList.get(position));
+                break;
+        }
+        startActivity(intent);
+    }
 }
