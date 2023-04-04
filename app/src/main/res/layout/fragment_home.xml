@@ -71,8 +71,8 @@
 
         <ImageView
             android:id="@+id/homeIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="118dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="150dp"
             android:layout_marginBottom="10dp"
@@ -80,7 +80,7 @@
             android:maxWidth="100dp"
             android:maxHeight="100dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/home_icon" />
+            android:src="@drawable/folder" />
 
         <TextView
             android:id="@+id/homeText"
@@ -89,7 +89,7 @@
             android:layout_below="@id/homeIcon"
             android:layout_centerInParent="true"
             android:gravity="center|top"
-            android:text="Ghi chú của bạn sẽ xuất hiện ở đây"
+            android:text="Không có ghi chú nào"
             android:textSize="20sp"
             android:textStyle="bold" />
 

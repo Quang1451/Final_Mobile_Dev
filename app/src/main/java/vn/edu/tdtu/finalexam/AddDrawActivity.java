@@ -1,5 +1,7 @@
 package vn.edu.tdtu.finalexam;
 
+import static vn.edu.tdtu.finalexam.DrawView.path;
+import static vn.edu.tdtu.finalexam.DrawView.paint_brush;
 import static vn.edu.tdtu.finalexam.DrawView.colorList;
 import static vn.edu.tdtu.finalexam.DrawView.current_brush;
 import static vn.edu.tdtu.finalexam.DrawView.pathList;
@@ -32,8 +34,7 @@ public class AddDrawActivity extends AppCompatActivity {
     DrawView drawView;
     EditText titleInput;
     Button eraserBtn, redBtn, yellowBtn, greenBtn, blackBtn;
-    public static Path path = new Path();
-    public static Paint paint_brush = new Paint();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +58,7 @@ public class AddDrawActivity extends AppCompatActivity {
             public void onClick(View view) {
                 paint_brush.setColor(Color.WHITE);
                 currentColor(paint_brush.getColor());
+
             }
         });
 
@@ -134,7 +136,6 @@ public class AddDrawActivity extends AppCompatActivity {
         byte[] bytes = stream.toByteArray();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             base64String = Base64.getEncoder().encodeToString(bytes);
-            System.out.println(base64String);
         }
 
         if(title.isEmpty()) {
@@ -159,7 +160,5 @@ public class AddDrawActivity extends AppCompatActivity {
         reference.child(loginAccount).child(strId).setValue(noteItem);
         Toast.makeText(this, "Lưu thành công", Toast.LENGTH_SHORT).show();
         finish();
-        //        drawView2.setBitmap(bitmap);
-//        drawView2.invalidate();
     }
 }

@@ -1,5 +1,7 @@
 package vn.edu.tdtu.finalexam;
 
+import static vn.edu.tdtu.finalexam.DrawView.path;
+import static vn.edu.tdtu.finalexam.DrawView.paint_brush;
 import static vn.edu.tdtu.finalexam.DrawView.colorList;
 import static vn.edu.tdtu.finalexam.DrawView.current_brush;
 import static vn.edu.tdtu.finalexam.DrawView.pathList;
@@ -15,11 +17,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Random;
 
 public class EditDrawActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -29,8 +36,7 @@ public class EditDrawActivity extends AppCompatActivity {
     DrawView drawView;
     EditText titleInput;
     Button eraserBtn, redBtn, yellowBtn, greenBtn, blackBtn;
-    public static Path path = new Path();
-    public static Paint paint_brush = new Paint();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,12 +118,13 @@ public class EditDrawActivity extends AppCompatActivity {
         if(draw == null) return;
 
         titleInput.setText(draw.getTitle());
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//            byte[] bytes = Base64.getDecoder().decode(draw.getData());
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//            drawView.setBitmap(bitmap);
-//            drawView.invalidate();
-//        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            byte[] bytes = Base64.getDecoder().decode(draw.getData());
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+            drawView.setBitmap(bitmap);
+            drawView.invalidate();
+        }
 
     }
 
@@ -133,6 +140,35 @@ public class EditDrawActivity extends AppCompatActivity {
     }
 
     private  void saveEdit() {
+        String loginAccount = getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
+        String title = titleInput.getText().toString();
+        String base64String = "";
 
+        drawView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(drawView.getDrawingCache());
+
+        //Convert to base64
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bytes = stream.toByteArray();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            base64String = Base64.getEncoder().encodeToString(bytes);
+        }
+
+        if(title.isEmpty()) {
+            Toast.makeText(this, "Chưa nhập tiêu đề", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(base64String.isEmpty()) {
+            Toast.makeText(this, "Chưa nhập có hình vẽ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        draw.setTitle(title);
+        draw.setData(base64String);
+
+        reference.child(loginAccount).child(draw.getId()).setValue(draw);
+        Toast.makeText(this, "Đã lưu chỉnh sửa!", Toast.LENGTH_SHORT).show();
     }
 }

@@ -3,10 +3,14 @@ package vn.edu.tdtu.finalexam;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,15 +47,15 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     RecyclerView recyclerView;
     RelativeLayout emptyLayout;
     NoteItemAdapter noteItemAdapter;
+    SearchView searchView;
     ProgressBar progressBar;
-
+    private static boolean flag = false;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         activity = getActivity();
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
     @Override
@@ -59,6 +63,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         super.onStart();
         addNoteBtn = activity.findViewById(R.id.addNoteBtn);
 
+        searchView = activity.findViewById(R.id.searchMenu);
         progressBar = activity.findViewById(R.id.progressBar);
         recyclerView = activity.findViewById(R.id.reView);
         emptyLayout = activity.findViewById(R.id.emptyList);
@@ -68,16 +73,26 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.INVISIBLE);
-        emptyLayout.setVisibility(View.INVISIBLE);
-
-        getListNoteItems();
+        getListNoteItems("");
 
         addNoteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showPopup(view);
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getListNoteItems(newText.trim());
+                searchView.clearFocus();
+                return false;
             }
         });
     }
@@ -108,7 +123,15 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         return false;
     }
 
-    private void getListNoteItems() {
+    private void getListNoteItems(String searchText) {
+        if(flag) return;
+        flag = true;
+
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+        emptyLayout.setVisibility(View.INVISIBLE);
+
+
         String loginAccount = activity.getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
         noteItemList.clear();
         //Query data
@@ -127,6 +150,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                        String data = child.child("data").getValue().toString();
                        String time = child.child("time").getValue().toString();
                        boolean isCanceled = child.child("canceled").getValue(boolean.class);
+
+                       if(!searchText.isEmpty() && !title.contains(searchText)) continue;
 
                        if(isCanceled) continue;
 
@@ -158,6 +183,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                    }
                    noteItemAdapter.setData(noteItemList);
                    recyclerView.setAdapter(noteItemAdapter);
+                   flag = false;
                 }
             }
         });
@@ -181,5 +207,30 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 break;
         }
         startActivity(intent);
+    }
+
+    @Override
+    public void onDeleteClick(int position) {
+        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(activity);
+        deleteDialog.setTitle("Thông báo");
+        deleteDialog.setMessage("Bạn có muốn xóa ghi chú này?");
+
+        deleteDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String loginAccount = activity.getSharedPreferences("SP", MODE_PRIVATE).getString("LoginBefore", "");
+                reference.child(loginAccount).child(noteItemList.get(position).getId()).child("canceled").setValue(true);
+                Toast.makeText(activity, "Đã xóa ghi chú!", Toast.LENGTH_SHORT).show();
+                getListNoteItems(searchView.getQuery().toString().trim());
+            }
+        });
+
+        deleteDialog.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        deleteDialog.create().show();
     }
 }

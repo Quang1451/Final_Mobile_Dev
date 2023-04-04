@@ -1,14 +1,12 @@
 package vn.edu.tdtu.finalexam;
 
-import static vn.edu.tdtu.finalexam.AddDrawActivity.paint_brush;
-import static vn.edu.tdtu.finalexam.AddDrawActivity.path;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +17,8 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 public class DrawView extends View {
+    public static Path path = new Path();
+    public static Paint paint_brush = new Paint();
     public static ArrayList<Path> pathList = new ArrayList<>();
     public static ArrayList<Integer> colorList = new ArrayList<>();
     public ViewGroup.LayoutParams params;
@@ -45,7 +45,7 @@ public class DrawView extends View {
         paint_brush.setStyle(Paint.Style.STROKE);
         paint_brush.setStrokeCap(Paint.Cap.ROUND);
         paint_brush.setStrokeJoin(Paint.Join.ROUND);
-        paint_brush.setStrokeWidth(10f);
+        paint_brush.setStrokeWidth(30f);
 
         params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
@@ -74,7 +74,8 @@ public class DrawView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if(bitmap != null) {
-            canvas.drawBitmap(bitmap,canvas.getWidth(),canvas.getHeight(), null);
+            Rect source = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            canvas.drawBitmap(bitmap, null,source, null);
         }
         for(int i = 0; i <pathList.size(); i++) {
             paint_brush.setColor(colorList.get(i));
