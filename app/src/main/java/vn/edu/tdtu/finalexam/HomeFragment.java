@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -35,7 +33,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener,SelectRecycleViewInterface {
@@ -66,7 +63,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         searchView = activity.findViewById(R.id.searchMenu);
         progressBar = activity.findViewById(R.id.progressBar);
         recyclerView = activity.findViewById(R.id.reView);
-        emptyLayout = activity.findViewById(R.id.emptyList);
+        emptyLayout = activity.findViewById(R.id.emptyDailyEvent);
 
         noteItemAdapter = new NoteItemAdapter(activity, this);
 

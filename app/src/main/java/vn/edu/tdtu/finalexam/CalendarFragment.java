@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -120,7 +119,7 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
         if(!daysInMonth.get(position).equals("")) {
             String text = dayMonthYear(position, selectedDate);
             Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(activity, DayNoteActivity.class));
+            startActivity(new Intent(activity, DailyNoteActivity.class));
         }
     }
 

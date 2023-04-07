@@ -2,72 +2,64 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout4"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    tools:context=".DailyNoteActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="0dp"
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="visible"
+        android:background="@color/blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/notestitle"
+            android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="NOTES"
-            android:textColor="@color/blue"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:drawableRight="@drawable/back_main"
+            android:drawableTint="@color/white"
+            android:gravity="center|center_vertical"
+            android:textSize="25sp" />
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchMenu"
-            android:layout_width="282dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            app:iconifiedByDefault="false"
-            app:queryHint="Tìm kiếm ghi chú" />
-
-        <ImageView
-            android:id="@+id/ViewList"
+        <TextView
+            android:id="@+id/dayTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:visibility="visible" />
+            android:layout_weight="9"
+            android:text="1/2/2023"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="120dp"
-        android:layout_height="128dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/emptyDailyEvent"
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hoạt động"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <RelativeLayout
         android:id="@+id/emptyDailyEvent"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/dailyRecycleView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+        app:layout_constraintTop_toBottomOf="@+id/textView9">
 
         <ImageView
             android:id="@+id/homeIcon"
@@ -80,7 +72,7 @@
             android:maxWidth="100dp"
             android:maxHeight="100dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/folder" />
+            android:src="@drawable/baseline_alarm" />
 
         <TextView
             android:id="@+id/homeText"
@@ -89,31 +81,31 @@
             android:layout_below="@id/homeIcon"
             android:layout_centerInParent="true"
             android:gravity="center|top"
-            android:text="Không có ghi chú nào"
+            android:text="Không có hoạt động nào"
             android:textSize="20sp"
             android:textStyle="bold" />
 
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reView"
+        android:id="@+id/dailyRecycleView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="10dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/addEventBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addNoteBtn"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/addEventBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:src="@drawable/add"
+        android:background="@color/blue"
+        android:text="Thêm hoạt động"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

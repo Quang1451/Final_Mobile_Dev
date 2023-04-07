@@ -15,7 +15,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".DayNoteActivity"
+            android:name=".DailyNoteActivity"
             android:exported="false" />
         <activity
             android:name=".EditDrawActivity"
