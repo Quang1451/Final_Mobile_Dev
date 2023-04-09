@@ -2,36 +2,34 @@ package vn.edu.tdtu.finalexam;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class EventDialog extends AppCompatDialogFragment {
+    private EventDialogInterface eventDialogInterface;
     private TextView title;
     private NumberPicker hourNumber, minuteNumber;
     private EditText eventContent;
     private String type;
-    private String content;
-    private int hour, minute;
+    private DailyNoteItem dailyNoteItem;
 
     public EventDialog() {
         this.type = "Add";
-        this.hour = 0;
-        this.minute = 0;
-        this.content= "";
     }
 
-    public EventDialog(String type, int hour, int minute, String content) {
+    public EventDialog(String type, DailyNoteItem dailyNoteItem) {
         this.type = type;
-        this.hour = hour;
-        this.minute = minute;
-        this.content = content;
+        this.dailyNoteItem = dailyNoteItem;
     }
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -57,28 +55,11 @@ public class EventDialog extends AppCompatDialogFragment {
         hourNumber.setFormatter(formatter);
         minuteNumber.setFormatter(formatter);
 
-        if(hour < 24) {
-            hourNumber.setValue(hour);
-        }
-        else
-        {
-            hourNumber.setValue(0);
-        }
-
-        if(minute < 60) {
-            minuteNumber.setValue(minute);
-        }
-        else
-        {
-            minuteNumber.setValue(0);
-        }
-
-        if(!content.isEmpty()) {
-            eventContent.setText(content);
-        }
 
         switch (type) {
             case "Add":
+                hourNumber.setValue(0);
+                minuteNumber.setValue(0);
                 title.setText("Thêm hoạt động");
                 addDialog.setView(view)
                         .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
@@ -90,11 +71,22 @@ public class EventDialog extends AppCompatDialogFragment {
                         .setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-
+                                String time = String.format("%02d", hourNumber.getValue())+":"+String.format("%02d", minuteNumber.getValue());
+                                String content = eventContent.getText().toString().trim();
+                                if(content.isEmpty() || content.length() < 1) {
+                                    Toast.makeText(getActivity(),"Chưa nhập hoạt đông", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                eventDialogInterface.addEventValue(time,content);
                             }
                         });
                 break;
             case "Edit":
+                String[] time = dailyNoteItem.getTime().split(":");
+                hourNumber.setValue(Integer.parseInt(time[0]));
+                minuteNumber.setValue(Integer.parseInt(time[1]));
+                eventContent.setText(dailyNoteItem.getData());
+
                 title.setText("Chỉnh sửa hoạt động");
                 addDialog.setView(view)
                         .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
@@ -106,11 +98,33 @@ public class EventDialog extends AppCompatDialogFragment {
                         .setPositiveButton("Chỉnh sửa", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-
+                                String time = String.format("%02d", hourNumber.getValue())+":"+String.format("%02d", minuteNumber.getValue());
+                                String content = eventContent.getText().toString().trim();
+                                if(content.isEmpty() || content.length() < 1) {
+                                    Toast.makeText(getActivity(),"Chưa nhập hoạt đông", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                eventDialogInterface.editEventValue(dailyNoteItem.getId(), time, content);
                             }
                         });
                 break;
         }
         return addDialog.create();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            eventDialogInterface = (EventDialogInterface) context;
+        }catch (ClassCastException e) {
+            throw new ClassCastException();
+        }
+
+    }
+
+    public interface EventDialogInterface {
+        void addEventValue(String time, String content);
+        void editEventValue(String id, String time, String content);
     }
 }

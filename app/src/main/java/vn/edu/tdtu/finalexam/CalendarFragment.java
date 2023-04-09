@@ -1,10 +1,13 @@
 package vn.edu.tdtu.finalexam;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -16,18 +19,34 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CalendarFragment extends Fragment implements SelectRecycleViewInterface {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference reference = database.getReference("Calendar");
     TextView previousBtn, nextBtn;
     TextView monthYearText;
     RecyclerView calendarRecyclerView;
     LocalDate selectedDate;
     Activity activity;
-    ArrayList<String> daysInMonth;
+    CalendarAdapter calendarAdapter;
+    ArrayList<CalendarCell> daysInMonth;
+    List<String> dayHasNotes;
+    String[] colorList = {"red","blue","yellow","green"};
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,14 +65,19 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
         previousBtn = activity.findViewById(R.id.previousBtn);
         nextBtn = activity.findViewById(R.id.nextBtn);
 
+        calendarAdapter = new CalendarAdapter(this);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity,7);
+        calendarRecyclerView.setLayoutManager(layoutManager);
         selectedDate = LocalDate.now();
+        dayHasNotes = new ArrayList<>();
+        queryDateNote();
         setMonthView();
-
         previousBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectedDate = selectedDate.minusMonths(1);
                 setMonthView();
+                queryDateNote();
             }
         });
 
@@ -62,6 +86,42 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
             public void onClick(View view) {
                 selectedDate = selectedDate.plusMonths(1);
                 setMonthView();
+                queryDateNote();
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void queryDateNote() {
+        String loginAccount = activity.getSharedPreferences("SP", Context.MODE_PRIVATE).getString("LoginBefore", "");
+        reference.child(loginAccount).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dayHasNotes.clear();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    if(!dayHasNotes.contains(child.child("date").getValue().toString())) {
+                        dayHasNotes.add(child.child("date").getValue().toString());
+                    }
+                }
+                System.out.println(dayHasNotes);
+                List<String> dayNoteInMonth = dayHasNotes.stream().filter(obj -> obj.contains(selectedDate.getMonthValue() +"-"+ selectedDate.getYear())).collect(Collectors.toList());
+                System.out.println(dayNoteInMonth);
+                for(String i : dayNoteInMonth) {
+                    String[] day = i.split("-");
+
+                    int index = IntStream.range(0, daysInMonth.size())
+                            .filter(obj -> daysInMonth.get(obj).getDay().equals(day[0]))
+                            .findFirst()
+                            .orElse(-1);
+
+                    daysInMonth.get(index).setColor(colorList[new Random().nextInt(colorList.length)]);
+                }
+                calendarAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -70,19 +130,16 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
     private void setMonthView() {
         monthYearText.setText(monthYearFormDate(selectedDate));
         daysInMonth = daysInMonthArray(selectedDate);
-        CalendarAdapter calendarAdapter = new CalendarAdapter(this);
-        calendarAdapter.setDayOfMonths(daysInMonth);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(activity,7);
 
-        calendarRecyclerView.setLayoutManager(layoutManager);
+        calendarAdapter.setDayOfMonths(daysInMonth);
         calendarRecyclerView.setAdapter(calendarAdapter);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private ArrayList<String> daysInMonthArray(LocalDate date) {
-        ArrayList<String> daysInMonthList = new ArrayList<>();
+    private ArrayList<CalendarCell> daysInMonthArray(LocalDate date) {
+        ArrayList<CalendarCell> daysInMonthList = new ArrayList<>();
         YearMonth yearMonth = YearMonth.from(date);
-        System.out.println(yearMonth);
+
         int daysInMonth = yearMonth.lengthOfMonth();
 
         LocalDate firstOfMonth = selectedDate.withDayOfMonth(1);
@@ -91,10 +148,11 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
 
         for(int  i = 1; i <= 42; i++) {
             if(i <= dayOfWeek || i > daysInMonth + dayOfWeek) {
-                daysInMonthList.add("");
+                daysInMonthList.add(new CalendarCell("", "white" ));
             }
             else {
-                daysInMonthList.add(String.valueOf(i - dayOfWeek));
+                String day = String.valueOf(i - dayOfWeek);
+                daysInMonthList.add(new CalendarCell(day,"white"));
             }
         }
         return daysInMonthList;
@@ -109,17 +167,18 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private String dayMonthYear(int position, LocalDate date) {
-        return daysInMonth.get(position)+"/"+ date.getMonthValue() +"/"+ date.getYear();
+        return daysInMonth.get(position).getDay()+"-"+ date.getMonthValue() +"-"+ date.getYear();
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onItemClick(int position) {
-        if(!daysInMonth.get(position).equals("")) {
-            String text = dayMonthYear(position, selectedDate);
-            Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(activity, DailyNoteActivity.class));
+        if(!daysInMonth.get(position).getDay().equals("")) {
+            String textDay = dayMonthYear(position, selectedDate);
+            Intent intent = new Intent(activity, DailyNoteActivity.class);
+            intent.putExtra("date", textDay);
+            startActivity(intent);
         }
     }
 

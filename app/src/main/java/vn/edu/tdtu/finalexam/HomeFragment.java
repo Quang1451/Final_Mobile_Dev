@@ -164,7 +164,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                break;
                        }
                        item.setCanceled(isCanceled);
-                       System.out.println(item.getId());
                        noteItemList.add(item);
                    }
 

@@ -1,5 +1,6 @@
 package vn.edu.tdtu.finalexam;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
-    private ArrayList<String> dayOfMonths;
+    private ArrayList<CalendarCell> dayOfMonths;
 
-    public void setDayOfMonths(ArrayList<String> dayOfMonths) {
+    public void setDayOfMonths(ArrayList<CalendarCell> dayOfMonths) {
         this.dayOfMonths = dayOfMonths;
     }
 
@@ -34,7 +35,30 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
-        holder.dayOfMonth.setText(dayOfMonths.get(position));
+        CalendarCell cell = dayOfMonths.get(position);
+        holder.dayOfMonth.setText(cell.getDay());
+        switch (cell.getColor()) {
+            case "white":
+                holder.dayOfMonth.setTextColor(Color.BLACK);
+                holder.itemView.setBackgroundColor(Color.WHITE);
+                break;
+            case "red":
+                holder.dayOfMonth.setTextColor(Color.WHITE);
+                holder.itemView.setBackgroundColor(Color.RED);
+                break;
+            case "blue":
+                holder.dayOfMonth.setTextColor(Color.WHITE);
+                holder.itemView.setBackgroundColor(Color.BLUE);
+                break;
+            case "yellow":
+                holder.dayOfMonth.setTextColor(Color.WHITE);
+                holder.itemView.setBackgroundColor(Color.YELLOW);
+                break;
+            case "green":
+                holder.dayOfMonth.setTextColor(Color.WHITE);
+                holder.itemView.setBackgroundColor(Color.GREEN);
+                break;
+        }
     }
 
     @Override

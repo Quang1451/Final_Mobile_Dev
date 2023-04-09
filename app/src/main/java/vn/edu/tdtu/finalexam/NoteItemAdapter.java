@@ -68,7 +68,6 @@ public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteIt
     public static class NoteItemHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView typeTV, tileTV, timeTV;
-        private Button deleteBtn;
 
         public NoteItemHolder(@NonNull View itemView, SelectRecycleViewInterface selectRecycleViewInterface) {
             super(itemView);
@@ -76,7 +75,7 @@ public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteIt
             typeTV = itemView.findViewById(R.id.cardType);
             tileTV = itemView.findViewById(R.id.cardTitle);
             timeTV = itemView.findViewById(R.id.cardTime);
-            deleteBtn = itemView.findViewById(R.id.deleteBtn);
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -89,14 +88,15 @@ public class NoteItemAdapter extends RecyclerView.Adapter<NoteItemAdapter.NoteIt
                 }
             });
 
-            deleteBtn.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View view) {
-                    if(selectRecycleViewInterface == null) return;
+                public boolean onLongClick(View view) {
+                    if(selectRecycleViewInterface == null) return false;
                     int pos = getAdapterPosition();
 
-                    if(pos == RecyclerView.NO_POSITION) return;
+                    if(pos == RecyclerView.NO_POSITION) return false;
                     selectRecycleViewInterface.onDeleteClick(pos);
+                    return true;
                 }
             });
         }

@@ -10,16 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/deleteBtn"
-            android:layout_margin="5dp"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/close"
-            android:backgroundTint="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageView
             android:background="@color/blue"
             android:id="@+id/cardImage"
