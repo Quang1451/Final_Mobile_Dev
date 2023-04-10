@@ -37,27 +37,25 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         CalendarCell cell = dayOfMonths.get(position);
         holder.dayOfMonth.setText(cell.getDay());
-        switch (cell.getColor()) {
-            case "white":
-                holder.dayOfMonth.setTextColor(Color.BLACK);
-                holder.itemView.setBackgroundColor(Color.WHITE);
-                break;
-            case "red":
-                holder.dayOfMonth.setTextColor(Color.WHITE);
-                holder.itemView.setBackgroundColor(Color.RED);
-                break;
-            case "blue":
-                holder.dayOfMonth.setTextColor(Color.WHITE);
-                holder.itemView.setBackgroundColor(Color.BLUE);
-                break;
-            case "yellow":
-                holder.dayOfMonth.setTextColor(Color.WHITE);
-                holder.itemView.setBackgroundColor(Color.YELLOW);
-                break;
-            case "green":
-                holder.dayOfMonth.setTextColor(Color.WHITE);
-                holder.itemView.setBackgroundColor(Color.GREEN);
-                break;
+
+        if(cell.getNumberEvent() > 0) {
+            holder.numberEvent.setVisibility(View.VISIBLE);
+            holder.numberEvent.setText(cell.getNumberEvent()+" EVENT");
+            holder.numberEvent.setTextColor(Color.WHITE);
+            switch (cell.getNumberEvent()) {
+                case 1:
+                    holder.numberEvent.setBackgroundColor(Color.GREEN);
+                    break;
+                case 2:
+                    holder.numberEvent.setBackgroundColor(Color.YELLOW);
+                    break;
+                default:
+                    holder.numberEvent.setBackgroundColor(Color.RED);
+                    break;
+            }
+        }
+        else {
+            holder.numberEvent.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -71,12 +69,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
 
     public static class CalendarViewHolder extends RecyclerView.ViewHolder {
-        private TextView dayOfMonth;
+        private TextView dayOfMonth, numberEvent;
 
         public CalendarViewHolder(@NonNull View itemView, SelectRecycleViewInterface selectRecycleViewInterface) {
             super(itemView);
-            dayOfMonth =itemView.findViewById(R.id.cellDayText);
-
+            dayOfMonth = itemView.findViewById(R.id.cellDayText);
+            numberEvent = itemView.findViewById(R.id.numberEvent);
+            numberEvent.setVisibility(View.INVISIBLE);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

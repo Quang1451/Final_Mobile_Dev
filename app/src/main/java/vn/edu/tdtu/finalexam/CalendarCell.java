@@ -2,11 +2,22 @@ package vn.edu.tdtu.finalexam;
 
 public class CalendarCell {
     private String day;
-    private String color;
+    private int numberEvent;
 
-    public CalendarCell(String day, String color) {
+    public int getNumberEvent() {
+        return numberEvent;
+    }
+
+    public void setNumberEvent(int numberEvent) {
+        this.numberEvent = numberEvent;
+    }
+    public void addNumberEvent(int value) {
+        this.numberEvent += value;
+    }
+
+    public CalendarCell(String day, int numberEvent) {
         this.day = day;
-        this.color = color;
+        this.numberEvent = numberEvent;
     }
 
     public String getDay() {
@@ -17,11 +28,5 @@ public class CalendarCell {
         this.day = day;
     }
 
-    public String getColor() {
-        return color;
-    }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
 }

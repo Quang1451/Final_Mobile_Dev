@@ -1,5 +1,6 @@
 package vn.edu.tdtu.finalexam;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,28 +20,28 @@ public class DailyNoteAdapter  extends RecyclerView.Adapter<DailyNoteAdapter.Dai
         this.dailyNoteList = dailyNoteList;
     }
 
-    private final SelectRecycleViewInterface selectRecycleViewInterface;
+    private final SelectDailyNoteInterface selectDailyNoteInterface;
 
-    public DailyNoteAdapter(List<DailyNoteItem> dailyNoteList, SelectRecycleViewInterface selectRecycleViewInterface) {
+    public DailyNoteAdapter(List<DailyNoteItem> dailyNoteList, SelectDailyNoteInterface selectDailyNoteInterface) {
         this.dailyNoteList = dailyNoteList;
-        this.selectRecycleViewInterface = selectRecycleViewInterface;
+        this.selectDailyNoteInterface = selectDailyNoteInterface;
     }
 
     @NonNull
     @Override
     public DailyNoteHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.daily_note_item, parent, false);
-        return new DailyNoteAdapter.DailyNoteHolder(view, selectRecycleViewInterface);
+        return new DailyNoteAdapter.DailyNoteHolder(view, selectDailyNoteInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull DailyNoteHolder holder, int position) {
         DailyNoteItem dailyNoteItem = dailyNoteList.get(position);
-
         if(dailyNoteItem == null) return;
-
         holder.timeTextView.setText(dailyNoteItem.getTime());
         holder.dailyContent.setText(dailyNoteItem.getData());
+        System.out.println(dailyNoteItem.isFinish());
+        holder.checkBox.setChecked(dailyNoteItem.isFinish());
     }
 
     @Override
@@ -54,40 +55,45 @@ public class DailyNoteAdapter  extends RecyclerView.Adapter<DailyNoteAdapter.Dai
     public static class DailyNoteHolder extends RecyclerView.ViewHolder {
         private TextView timeTextView, dailyContent;
         private CheckBox checkBox;
-        public DailyNoteHolder(@NonNull View itemView, SelectRecycleViewInterface selectRecycleViewInterface) {
+        public DailyNoteHolder(@NonNull View itemView, SelectDailyNoteInterface selectDailyNoteInterface) {
             super(itemView);
 
             timeTextView = itemView.findViewById(R.id.timeView);
             dailyContent = itemView.findViewById(R.id.dailyContent);
             checkBox = itemView.findViewById(R.id.checkBox);
 
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    System.out.println(b);
-                }
-            });
-
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(selectRecycleViewInterface == null) return;
+                    if(selectDailyNoteInterface == null) return;
                     int pos = getAdapterPosition();
 
                     if(pos == RecyclerView.NO_POSITION) return;
-                    selectRecycleViewInterface.onItemClick(pos);
+                    selectDailyNoteInterface.onItemClick(pos);
                 }
             });
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if(selectRecycleViewInterface == null) return false;
+                    if(selectDailyNoteInterface == null) return false;
                     int pos = getAdapterPosition();
 
                     if(pos == RecyclerView.NO_POSITION) return false;
-                    selectRecycleViewInterface.onDeleteClick(pos);
+                    selectDailyNoteInterface.onDeleteClick(pos);
                     return true;
+                }
+            });
+
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(selectDailyNoteInterface == null) return;
+                    int pos = getAdapterPosition();
+
+                    if(pos == RecyclerView.NO_POSITION) return;
+
+                    selectDailyNoteInterface.onUpdateFinish(pos, b);
                 }
             });
         }

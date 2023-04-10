@@ -46,7 +46,6 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
     CalendarAdapter calendarAdapter;
     ArrayList<CalendarCell> daysInMonth;
     List<String> dayHasNotes;
-    String[] colorList = {"red","blue","yellow","green"};
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -99,9 +98,7 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dayHasNotes.clear();
                 for (DataSnapshot child : snapshot.getChildren()) {
-                    if(!dayHasNotes.contains(child.child("date").getValue().toString())) {
-                        dayHasNotes.add(child.child("date").getValue().toString());
-                    }
+                    dayHasNotes.add(child.child("date").getValue().toString());
                 }
                 System.out.println(dayHasNotes);
                 List<String> dayNoteInMonth = dayHasNotes.stream().filter(obj -> obj.contains(selectedDate.getMonthValue() +"-"+ selectedDate.getYear())).collect(Collectors.toList());
@@ -114,7 +111,8 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
                             .findFirst()
                             .orElse(-1);
 
-                    daysInMonth.get(index).setColor(colorList[new Random().nextInt(colorList.length)]);
+                    daysInMonth.get(index).addNumberEvent(1);
+                    //daysInMonth.get(index).setColor(colorList[new Random().nextInt(colorList.length)]);
                 }
                 calendarAdapter.notifyDataSetChanged();
             }
@@ -148,11 +146,11 @@ public class CalendarFragment extends Fragment implements SelectRecycleViewInter
 
         for(int  i = 1; i <= 42; i++) {
             if(i <= dayOfWeek || i > daysInMonth + dayOfWeek) {
-                daysInMonthList.add(new CalendarCell("", "white" ));
+                daysInMonthList.add(new CalendarCell("", 0 ));
             }
             else {
                 String day = String.valueOf(i - dayOfWeek);
-                daysInMonthList.add(new CalendarCell(day,"white"));
+                daysInMonthList.add(new CalendarCell(day,0));
             }
         }
         return daysInMonthList;

@@ -5,14 +5,31 @@ public class DailyNoteItem {
     private String date;
     private String time;
     private String data;
+    private boolean finish;
+
+    public boolean isFinish() {
+        return finish;
+    }
+
+    public void setFinish(boolean finish) {
+        this.finish = finish;
+    }
 
     public DailyNoteItem(String id, String date, String time, String data) {
         this.id = id;
         this.date = date;
         this.time = time;
         this.data = data;
+        this.finish = false;
     }
 
+    public DailyNoteItem(String id, String date, String time, String data, boolean finish) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.data = data;
+        this.finish = finish;
+    }
     public void setDate(String date) {
         this.date = date;
     }
